@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asuron QR Generator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Poppins', sans-serif;
+            margin: 0;
+            padding: 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        #container {
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+            backdrop-filter: blur(4px);
+            border: 1px solid rgba(255, 255, 255, 0.18);
+            text-align: center;
+            width: 90%;
+            max-width: 450px;
+            margin: 20px;
+            transition: transform 0.3s ease;
+        }
+
+        #container:hover {
+            transform: translateY(-5px);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            color: #FFD700;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            margin-bottom: 20px;
+            font-size: 16px;
+            border-radius: 10px;
+            border: none;
+            background-color: rgba(255, 255, 255, 0.2);
+            color: white;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 215, 0, 0.5);
+        }
+
+        button {
+            padding: 12px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FFD700;
+            color: black;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            margin-bottom: 15px;
+            width: 100%;
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+            background-color: #FFC900;
+        }
+
+        button:active {
+            transform: translateY(1px);
+        }
+
+        canvas {
+            margin-top: 20px;
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        canvas:hover {
+            transform: scale(1.05);
+        }
+
+        footer {
+            margin-top: 30px;
+            color: #FFD700;
+            font-size: 0.9rem;
+            opacity: 0.8;
+            transition: opacity 0.3s ease;
+        }
+
+        footer:hover {
+            opacity: 1;
+        }
+
+        .section {
+            margin-top: 40px;
+            color: #FFD700;
+            opacity: 0.9;
+            transition: opacity 0.3s ease;
+        }
+
+        .section:hover {
+            opacity: 1;
+        }
+
+        .section h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.3);
+        }
+
+        .section p {
+            margin-bottom: 10px;
+            line-height: 1.6;
+            font-weight: 300;
+        }
+
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            button {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            .section h2 {
+                font-size: 1.3rem;
+            }
+
+            .section p {
+                font-size: 14px;
+            }
+        }
+
+        @keyframes bounce {
+
+            0%,
+            20%,
+            50%,
+            80%,
+            100% {
+                transform: translateY(0);
+            }
+
+            40% {
+                transform: translateY(-20px);
+            }
+
+            60% {
+                transform: translateY(-10px);
+            }
+        }
+
+        .bounce {
+            animation: bounce 1s;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="container">
+        <h1>Asuron QR Generator</h1>
+        <input type="text" id="text" placeholder="Enter text or URL" />
+        <br>
+        <button onclick="generateQRCode()">Generate QR Code</button>
+        <br>
+        <canvas id="qrcode"></canvas>
+        <br>
+        <a id="download" download="qrcode.png" style="display:none;">
+            <button>Download QR Code</button>
+        </a>
+
+        <div class="section" id="about-us">
+            <h2>About Us</h2>
+            <p>Welcome to the Asuron QR Generator! This tool allows you to create custom QR codes for your links or
+                text, making sharing easier than ever. Developed by John Asuron, our goal is to provide simple and
+                effective digital tools for everyday use.</p>
+        </div>
+
+        <div class="section" id="contacts">
+            <h2>Contact Us</h2>
+            <p>Email: johnasuron@live.com</p>
+            <p>Phone: +254 757 081670</p>
+            <p>Office: Turkana Lodwar</p>
+        </div>
+
+        <footer>
+            <p>Developed by John Asuron</p>
+        </footer>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.4.4/build/qrcode.min.js"></script>
+    <script>
+        function generateQRCode() {
+            var text = document.getElementById("text").value;
+            if (text.trim() === "") {
+                alert("Please enter some text");
+                return;
+            }
+
+            var canvas = document.getElementById("qrcode");
+            QRCode.toCanvas(canvas, text, {
+                width: 250,
+                height: 250,
+                color: {
+                    dark: '#000000',  // Changed to black
+                    light: '#FFFFFF'  // White background
+                }
+            }, function (error) {
+                if (error) console.error(error);
+                console.log('QR code generated!');
+                var downloadLink = document.getElementById("download");
+                downloadLink.href = canvas.toDataURL("image/png");
+                downloadLink.style.display = "block";
+
+                // Add bounce animation
+                canvas.classList.add('bounce');
+                setTimeout(() => {
+                    canvas.classList.remove('bounce');
+                }, 1000);
+            });
+        }
+
+        // Add smooth scrolling
+        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+            anchor.addEventListener('click', function (e) {
+                e.preventDefault();
+                document.querySelector(this.getAttribute('href')).scrollIntoView({
+                    behavior: 'smooth'
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
